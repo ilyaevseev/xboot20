@@ -1,0 +1,55 @@
+# XBOOT 2.0 makefile, see XBOOT.DOC
+
+#======  Programs  ======
+
+tp = D:\TURBO\BP\TPC.EXE
+tasm = tasm
+tlink = tlink
+tdstrip = tdstrip
+binobj = binobj
+
+#======  Global rules  ======
+
+# .asm.obj:
+#   $(tasm) /t /zi $&, $(TEMP)
+#
+# .obj.com:
+#   $(tlink) /x /v $(TEMP)\$&, $(TEMP)\$&
+#   $(tdstrip) -c $(TEMP)\$&.exe
+
+#======  XBOOT rules  ======
+
+$(TEMP)\xboot.exe: xboot.pas $(TEMP)\xboot.obx
+  $(tp) /Q /M xboot.pas
+
+$(TEMP)\xboot.obx: $(TEMP)\xboot.com
+  $(binobj) $(TEMP)\xboot.com $(TEMP)\xboot.obx MBR_CODE
+
+$(TEMP)\xboot.com: $(TEMP)\xboot.obj
+  $(tlink) /x /v $(TEMP)\xboot.obj, $(TEMP)\xboot.exe
+  $(tdstrip) -c $(TEMP)\xboot.exe
+
+$(TEMP)\xboot.obj: xboot.asm
+  $(tasm) /t /zi xboot.asm, $(TEMP)
+
+clean:
+  for %c in (com obj obx) del $(TEMP)\xboot.%c
+
+all: $(TEMP)\xboot.exe clean
+  for %c in ($(tdstrip) pklite copy) %c $(TEMP)\xboot.exe
+
+#======  FlopBoot rules  ======
+
+flopboot: flopboot.exe
+  for %c in ($(tdstrip) pklite copy) %c $(TEMP)\flopboot.exe
+  del $(TEMP)\boot_???.obj
+
+flopboot.exe: flopboot.pas $(TEMP)\boot_dos.obj $(TEMP)\boot_hd.obj
+  $(tp) flopboot
+
+$(TEMP)\boot_hd.obj: boot_hd._a_
+  $(binobj) boot_hd._a_ $(TEMP)\boot_hd.obj BootCode
+
+$(TEMP)\boot_dos.obj: boot_dos._a_
+  $(binobj) boot_dos._a_ $(TEMP)\boot_dos.obj StandardBoot
+

@@ -1,0 +1,16 @@
+XBOOT 2.0 (c) 1996 by EBCEEB,inc.
+
+This program configures menu in master
+boot record of your hard disk and allow
+select operating system after RESET
+(Unix/OS2/Win95 or DOS/DRDOS/PCDOS or...)
+
+It's best analog (very compact & fast)
+of BootAny, Linux and OS/2 boot manager !
+
+Nice interface, install and re-confugure.
+
+Some additional disk tools.
+
+Fully source codes (PAS, ASM) and russian doc.
+
